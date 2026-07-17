@@ -12,7 +12,6 @@ final class HelpCard {
     drag him ........ carry & fling him (he splats)
     drop a file ..... he holds it; drag it out of his
                       mouth into any app or folder
-    ⌥-drop a file ... he buries it in the Trash
     double-click .... fetch! type a name, he digs it up
     right-click ..... this menu
 

@@ -20,7 +20,6 @@ A pixel cat (or several) that lives on your Mac. He walks along the bottom of yo
 
 **With you**
 - **drop a file on him** → he holds it in his paws; drag it back out into any app or folder later, or click it to open it. a living clipboard
-- **⌥-drop a file** → he hauls it to the corner and buries it in the Trash (always recoverable)
 - **double-click him** → type "math notes pdf" → he digs up the best match via Spotlight and holds it out
 - **Treat Box** (right-click) → your cursor becomes a snack. fish, biscuit and water go down well. chocolate and lemon are… mistakes
 - **drag & fling him.** he splats. he forgives

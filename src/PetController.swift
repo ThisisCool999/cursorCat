@@ -311,16 +311,12 @@ final class PetController: NSObject {
         cat.view.onCatDragBegan = { [weak cat] point in cat?.engine.beginDrag(at: point) }
         cat.view.onCatDragMoved = { [weak cat] point in cat?.engine.dragMoved(to: point) }
         cat.view.onCatDragEnded = { [weak cat] point in cat?.engine.endDrag(at: point) }
-        cat.view.onFileDropped = { [weak self, weak cat] url, toTrash in
-            guard let self, let cat else { return }
+        cat.view.onFileDropped = { [weak cat] url, _ in
+            guard let cat else { return }
             cat.engine.noteInteraction()
-            if toTrash {
-                self.startTrashRun(cat, url)
-            } else {
-                cat.heldFile = url
-                cat.engine.surprise()
-                cat.bubbles.showSpeech("got it: \(url.lastPathComponent)", duration: 2.0)
-            }
+            cat.heldFile = url
+            cat.engine.surprise()
+            cat.bubbles.showSpeech("got it: \(url.lastPathComponent)", duration: 2.0)
         }
         cat.view.onFileDraggedAway = { [weak cat] in
             guard let cat else { return }
@@ -464,20 +460,6 @@ final class PetController: NSObject {
                 guard let cat else { return }
                 cat.heldFile = url
                 cat.bubbles.showSpeech(url.lastPathComponent, duration: 2.4)
-            }
-        }
-    }
-
-    private func startTrashRun(_ cat: Cat, _ url: URL) {
-        cat.heldFile = url
-        cat.bubbles.showSpeech("to the trash!", duration: 1.4)
-        let corner = primaryScreen().frame.maxX - 80
-        cat.engine.goTrash(at: corner) { [weak cat] in
-            guard let cat, cat.heldFile == url else { return }
-            NSWorkspace.shared.recycle([url]) { [weak cat] _, error in
-                guard let cat else { return }
-                cat.heldFile = nil
-                cat.bubbles.showSpeech(error == nil ? "buried in the Trash" : "couldn't trash that one", duration: 2.0)
             }
         }
     }

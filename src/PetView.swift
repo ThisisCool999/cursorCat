@@ -196,8 +196,7 @@ final class PetView: NSView, NSDraggingSource {
             options: [.urlReadingFileURLsOnly: true]
         ) as? [URL]
         guard let url = urls?.first else { return false }
-        let toTrash = NSEvent.modifierFlags.contains(.option)
-        onFileDropped?(url, toTrash)
+        onFileDropped?(url, false)
         return true
     }
 }
