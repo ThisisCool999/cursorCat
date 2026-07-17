@@ -50,6 +50,7 @@ final class PetController: NSObject {
     private var napClickMonitor: Any?
     private var napTimeoutWork: DispatchWorkItem?
     private var debugLastDump: CFTimeInterval = 0
+    private var lastSpaceCheck: CFTimeInterval = 0
     private let debugPath = NSTemporaryDirectory() + "mochi_state.txt"
 
     private var primary: Cat? { cats.first { !$0.isGuest } }
@@ -208,6 +209,17 @@ final class PetController: NSObject {
         companion.update(cursor: cursor, dt: dt)
         effects.tick(dt)
         maybeManageGuests(link.timestamp, screen: frame)
+
+        if link.timestamp - lastSpaceCheck > 2 {
+            lastSpaceCheck = link.timestamp
+            let strandedCat = cats.contains { !$0.lastHidden && (!$0.panel.isVisible || !$0.panel.isOnActiveSpace) }
+            if strandedCat || !effects.isOnActiveSpace {
+                effects.show()
+                for cat in cats where !cat.lastHidden {
+                    cat.panel.orderFrontRegardless()
+                }
+            }
+        }
 
         if let primary, primary.engine.activity == .sleep, link.timestamp - lastZzz > 4 {
             lastZzz = link.timestamp

@@ -69,6 +69,10 @@ final class EffectsOverlay {
         panel.orderFrontRegardless()
     }
 
+    var isOnActiveSpace: Bool {
+        panel.isVisible && panel.isOnActiveSpace
+    }
+
     private static func makeRainbowChunk() -> CGImage {
         let colors: [NSColor] = [
             NSColor(hex: 0xE05B5B), NSColor(hex: 0xE0A35B), NSColor(hex: 0xE8D26F),
