@@ -69,6 +69,9 @@ final class PetController: NSObject {
         treatBox.onPick = { [weak self] kind in
             self?.selectedTreat = kind
         }
+        treatBox.onClosed = { [weak self] in
+            self?.selectedTreat = nil
+        }
         pixelDrawer.onSave = { [weak self] name, coatId, grid in
             self?.addCat(spec: CatSpec(name: name, coatId: coatId, customGrid: grid))
         }

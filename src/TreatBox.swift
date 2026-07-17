@@ -2,6 +2,7 @@ import AppKit
 
 final class TreatBox {
     var onPick: ((TreatKind?) -> Void)?
+    var onClosed: (() -> Void)?
     var isVisible: Bool { panel.isVisible }
 
     private let panel: NSPanel
@@ -58,7 +59,9 @@ final class TreatBox {
     }
 
     func hide() {
+        guard panel.isVisible else { return }
         panel.orderOut(nil)
+        onClosed?()
     }
 
     func refresh(selected: TreatKind?) {
