@@ -537,11 +537,16 @@ final class PetController: NSObject {
         CatStore.save(cats.compactMap { $0.spec })
     }
 
+    private var adoptionTimes: [CFTimeInterval] = []
+
     private func addCat(spec: CatSpec) {
-        guard cats.filter({ !$0.isGuest }).count < 15 else {
-            primary?.bubbles.showSpeech("this is a computer, not a shelter!!", duration: 2.4)
+        let now = CACurrentMediaTime()
+        adoptionTimes.removeAll { now - $0 > 60 }
+        guard adoptionTimes.count < 15 else {
+            primary?.bubbles.showSpeech("slow down!! adoption papers take time (15/min)", duration: 2.6)
             return
         }
+        adoptionTimes.append(now)
         let cat = makeCat(look: spec.look, isGuest: false, spec: spec)
         cat.place(on: primaryScreen().frame, at: .random(in: primaryScreen().frame.midX - 200...primaryScreen().frame.midX + 200))
         cat.bubbles.showSpeech("hello! i'm \(spec.name)", duration: 2.2)
