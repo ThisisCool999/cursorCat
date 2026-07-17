@@ -271,10 +271,7 @@ final class PetController: NSObject {
                 cat.bubbles.showSpeech("HISSS!! citrus?!", duration: 2.2)
             }
             if !kind.isBad, self.selectedTreat == kind {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
-                    guard let self, self.selectedTreat == kind else { return }
-                    self.selectedTreat = nil
-                }
+                self.selectedTreat = nil
             }
         }
         cat.engine.onEnterCursorNap = { [weak self, weak cat] in

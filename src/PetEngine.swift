@@ -89,6 +89,7 @@ final class PetEngine {
     private var napPlanned = false
     private var napDeadline: TimeInterval = 0
     private var treatCooldownUntil: TimeInterval = 0
+    private var recoilCooldownUntil: TimeInterval = 0
     private var recoilTreat: TreatKind?
     private var cursorLock = CGPoint.zero
     private var tongueStage = 0
@@ -653,13 +654,14 @@ final class PetEngine {
         let dx = env.cursor.x - position.x
         if abs(dx) < 46 {
             if env.cursor.y - position.y < 130 {
-                treatCooldownUntil = now + (treat.isBad ? .random(in: 5...9) : .random(in: 25...55))
                 onTreatReaction?(treat)
                 if treat.isBad {
+                    recoilCooldownUntil = now + .random(in: 8...15)
                     recoilTreat = treat
                     surprise()
                     setActivity(.recoil, for: 1.1)
                 } else {
+                    treatCooldownUntil = now + .random(in: 25...55)
                     setActivity(.eat, for: 2.4)
                 }
             } else {
@@ -690,8 +692,13 @@ final class PetEngine {
     }
 
     private func maybeApproachTreat(env: PetEnvironment) {
-        guard env.treat != nil, now > treatCooldownUntil, !stayPut, !isSleeping,
+        guard let treat = env.treat, !stayPut, !isSleeping,
               pendingErrand == nil else { return }
+        if treat.isBad {
+            guard now > recoilCooldownUntil else { return }
+        } else {
+            guard now > treatCooldownUntil else { return }
+        }
         switch surface {
         case .ground:
             guard abs(env.cursor.x - position.x) < 800 else { return }
@@ -706,24 +713,26 @@ final class PetEngine {
     }
 
     func feedNow(_ kind: TreatKind) -> Bool {
-        guard now > treatCooldownUntil, !isSleeping,
-              activity != .dragged, activity != .cursorNap else { return false }
+        guard !isSleeping, activity != .dragged, activity != .cursorNap else { return false }
         switch surface {
         case .ground, .windowTop:
             break
         default:
             return false
         }
-        noteInteraction()
-        treatCooldownUntil = now + (kind.isBad ? .random(in: 5...9) : .random(in: 20...45))
-        onTreatReaction?(kind)
         if kind.isBad {
+            noteInteraction()
             recoilTreat = kind
             surprise()
+            onTreatReaction?(kind)
             setActivity(.recoil, for: 1.1)
-        } else {
-            setActivity(.eat, for: 2.4)
+            return true
         }
+        guard now > treatCooldownUntil else { return false }
+        noteInteraction()
+        treatCooldownUntil = now + .random(in: 20...45)
+        onTreatReaction?(kind)
+        setActivity(.eat, for: 2.4)
         return true
     }
 
