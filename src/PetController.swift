@@ -309,8 +309,8 @@ final class PetController: NSObject {
             self.openHeld(cat)
         }
         cat.view.onRightClick = { [weak self, weak cat] event in
-            guard let self, let cat, let menu = self.contextMenuProvider?() else { return }
-            NSMenu.popUpContextMenu(menu, with: event, for: cat.view)
+            guard let self, let cat else { return }
+            NSMenu.popUpContextMenu(self.buildCatContextMenu(for: cat), with: event, for: cat.view)
         }
         cat.view.onCatDragBegan = { [weak cat] point in cat?.engine.beginDrag(at: point) }
         cat.view.onCatDragMoved = { [weak cat] point in cat?.engine.dragMoved(to: point) }
@@ -554,6 +554,36 @@ final class PetController: NSObject {
         cats.removeAll { $0 === cat }
         persist()
         onStateChanged?()
+    }
+
+    func buildCatContextMenu(for cat: Cat) -> NSMenu {
+        let menu = NSMenu()
+        let name = cat.spec?.name ?? cat.look.name
+        let header = NSMenuItem(title: cat.isGuest ? "\(name) (visiting)" : name, action: nil, keyEquivalent: "")
+        header.isEnabled = false
+        menu.addItem(header)
+        menu.addItem(ClosureItem(cat.engine.isSleeping ? "Wake Up" : "Sleep") { [weak self, weak cat] in
+            guard let self, let cat else { return }
+            if self.nappingCat === cat {
+                self.endCursorNap()
+            } else {
+                cat.engine.setSleeping(!cat.engine.isSleeping)
+            }
+            self.onStateChanged?()
+        })
+        menu.addItem(ClosureItem("Stay Put", state: cat.engine.stayPut ? .on : .off) { [weak self, weak cat] in
+            guard let cat else { return }
+            cat.engine.stayPut.toggle()
+            self?.onStateChanged?()
+        })
+        menu.addItem(NSMenuItem.separator())
+        if let global = contextMenuProvider?() {
+            for item in global.items {
+                global.removeItem(item)
+                menu.addItem(item)
+            }
+        }
+        return menu
     }
 
     func buildCatsMenu() -> NSMenu {

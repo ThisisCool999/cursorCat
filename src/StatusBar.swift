@@ -52,8 +52,8 @@ final class StatusBarController: NSObject {
             menu.addItem(ClosureMenuItem(title: "Put It Down", handler: actions.dropHeldFile))
             menu.addItem(NSMenuItem.separator())
         }
-        menu.addItem(ClosureMenuItem(title: isSleeping ? "Wake Up" : "Sleep", handler: actions.toggleSleep))
-        let stayPutItem = ClosureMenuItem(title: "Stay Put", handler: actions.toggleStayPut)
+        menu.addItem(ClosureMenuItem(title: isSleeping ? "Everyone Wake Up" : "Everyone Sleep", handler: actions.toggleSleep))
+        let stayPutItem = ClosureMenuItem(title: "Everyone Stay Put", handler: actions.toggleStayPut)
         stayPutItem.state = isStayPut ? .on : .off
         menu.addItem(stayPutItem)
         menu.addItem(NSMenuItem.separator())
