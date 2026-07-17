@@ -103,6 +103,12 @@ final class PetController: NSObject {
                 self?.primary?.heldFile = URL(fileURLWithPath: NSHomeDirectory() + "/Desktop")
             }
         }
+        if ProcessInfo.processInfo.environment["MOCHI_TEST_TONGUE"] == "1" {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+                guard let self, let cat = self.cats.last else { return }
+                cat.engine.debugTongueEat(cursor: NSEvent.mouseLocation)
+            }
+        }
         guard let anchor = cats.first?.view else { return }
         let link = anchor.displayLink(target: self, selector: #selector(step(_:)))
         link.add(to: .main, forMode: .common)
@@ -154,12 +160,14 @@ final class PetController: NSObject {
             cursorSpeed: cursorSpeed, notchRange: notch, treat: selectedTreat
         )
 
-        let tongueOwner = cats.first { $0.engine.activity == .tongueEat }
-        var tongueDrawn = false
         let scale = screen.backingScaleFactor
+        var tongueState: RenderState?
 
         for cat in cats {
             let state = cat.engine.tick(dt, env: env)
+            if cat.engine.activity == .tongueEat, tongueState == nil {
+                tongueState = state
+            }
 
             if state.hidden != cat.lastHidden {
                 cat.lastHidden = state.hidden
@@ -186,21 +194,13 @@ final class PetController: NSObject {
                 }
             }
 
-            if cat === tongueOwner {
-                effects.setTongue(from: state.tongueFrom, to: state.tongueTo)
-                effects.setFakeCursor(at: state.fakeCursor)
-                tongueDrawn = true
-            }
-
             if !cat.panel.frame.intersects(frame), !cat.lastHidden {
                 cat.place(on: frame)
             }
         }
-        if !tongueDrawn {
-            effects.setTongue(from: nil, to: nil)
-            effects.setFakeCursor(at: nil)
-        }
-        if gagCursorHidden, tongueOwner == nil {
+        effects.setTongue(from: tongueState?.tongueFrom, to: tongueState?.tongueTo)
+        effects.setFakeCursor(at: tongueState?.fakeCursor)
+        if gagCursorHidden, tongueState == nil {
             gagCursorHidden = false
             CGDisplayShowCursor(CGMainDisplayID())
         }
@@ -227,7 +227,8 @@ final class PetController: NSObject {
 
         if ProcessInfo.processInfo.environment["MOCHI_DEBUG"] == "1", link.timestamp - debugLastDump > 1, let primary {
             debugLastDump = link.timestamp
-            let line = "cats=\(cats.count) pos=(\(Int(primary.engine.position.x)),\(Int(primary.engine.position.y))) surface=\(primary.engine.surface) activity=\(primary.engine.activity) platforms=\(tracker.platforms.count) held=\(primary.heldFile?.lastPathComponent ?? "none") iconHidden=\(primary.view.debugIconState())\n"
+            let tongueCat = cats.first { $0.engine.activity == .tongueEat }
+            let line = "cats=\(cats.count) activity=\(primary.engine.activity) tongueOwner=\(tongueCat != nil) overlay=[\(effects.debugTongueState())]\n"
             if let data = line.data(using: .utf8), let handle = FileHandle(forWritingAtPath: debugPath) {
                 handle.seekToEndOfFile(); handle.write(data); handle.closeFile()
             } else {
@@ -281,6 +282,9 @@ final class PetController: NSObject {
             }
         }
         cat.engine.onCursorSpat = { [weak cat] in cat?.bubbles.showSpeech("ptooey!!", duration: 1.6) }
+        cat.engine.tongueGate = { [weak self] in
+            self?.cats.allSatisfy { $0.engine.activity != .tongueEat } ?? true
+        }
 
         cat.view.onTap = { [weak self, weak cat] in
             guard let self, let cat else { return }

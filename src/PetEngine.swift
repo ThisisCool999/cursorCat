@@ -100,6 +100,7 @@ final class PetEngine {
     var onEnterCursorNap: (() -> Void)?
     var onCursorEaten: (() -> Void)?
     var onCursorSpat: (() -> Void)?
+    var tongueGate: (() -> Bool)?
 
     var facingDirection: CGFloat { facing }
 
@@ -737,8 +738,16 @@ final class PetEngine {
         let distance = hypot(env.cursor.x - position.x, env.cursor.y - position.y)
         guard distance > 60, distance < 380 else { return }
         guard Double.random(in: 0...1) < 0.022 * (1.0 / 60.0) else { return }
+        guard tongueGate?() ?? true else { return }
         cursorLock = env.cursor
         facing = env.cursor.x >= position.x ? 1 : -1
+        tongueStage = 0
+        setActivity(.tongueEat, for: 4.5)
+    }
+
+    func debugTongueEat(cursor: CGPoint) {
+        cursorLock = cursor
+        facing = cursor.x >= position.x ? 1 : -1
         tongueStage = 0
         setActivity(.tongueEat, for: 4.5)
     }

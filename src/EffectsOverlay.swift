@@ -160,6 +160,10 @@ final class EffectsOverlay {
         fakeCursorLayer.isHidden = false
     }
 
+    func debugTongueState() -> String {
+        "fillHidden=\(tongueFill.isHidden) hasPath=\(tongueFill.path != nil) panelVisible=\(panel.isVisible) panelAlpha=\(panel.alphaValue)"
+    }
+
     func tick(_ dt: TimeInterval) {
         guard !particles.isEmpty else { return }
         CATransaction.begin()
