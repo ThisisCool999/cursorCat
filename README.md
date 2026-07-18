@@ -1,10 +1,10 @@
-# Mochi 🐾
+# CursorCat 🐾
 
 A pixel cat (or several) that lives on your Mac. He walks along the bottom of your screen, rides on top of your windows, climbs the walls, hangs from your menu bar — and he has opinions about your files, your apps, and especially your cursor.
 
 <!-- RECORD A GIF AND PUT IT HERE — this is the whole sales pitch.
      20 seconds of: tongue-eating the cursor, rainbow zoomies, trash run, cat pile. -->
-![Mochi demo](docs/demo.gif)
+![CursorCat demo](docs/demo.gif)
 
 ![the coats](docs/coats.png)
 
@@ -29,9 +29,9 @@ A pixel cat (or several) that lives on your Mac. He walks along the bottom of yo
 
 Requirements: **Apple Silicon Mac (M1 or newer), macOS 14+**
 
-1. Download `Mochi.zip` from [Releases](../../releases), unzip, drag `Mochi.app` wherever you like
+1. Download `CursorCat.zip` from [Releases](../../releases), unzip, drag `CursorCat.app` wherever you like
 2. **First launch will be blocked** (the app is unsigned — no $99 Apple certificate here). Double-click it once, then go to **System Settings → Privacy & Security**, scroll down, and click **Open Anyway**. That's a one-time thing.
-   - terminal alternative: `xattr -cr /path/to/Mochi.app`
+   - terminal alternative: `xattr -cr /path/to/CursorCat.app`
 3. On first run macOS asks for **Desktop folder access** — that's for the file-sniffing features. The first time you use a Finder feature it asks to **control Finder**. Both are expected; nothing leaves your machine.
 
 No Dock icon — look for **🐾 in your menu bar**. Quit from there too.
@@ -40,9 +40,9 @@ No Dock icon — look for **🐾 in your menu bar**. Quit from there too.
 
 ```
 git clone <this repo>
-cd mochi
+cd cursor-cat
 bash make_app.sh
-open Mochi.app
+open CursorCat.app
 ```
 
 Needs Xcode Command Line Tools (`xcode-select --install`). No Xcode project, no dependencies — it's a shell script and `swiftc`.

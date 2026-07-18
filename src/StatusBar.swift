@@ -57,9 +57,9 @@ final class StatusBarController: NSObject {
         stayPutItem.state = isStayPut ? .on : .off
         menu.addItem(stayPutItem)
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(ClosureMenuItem(title: "Summon Mochi", handler: actions.summon))
-        menu.addItem(ClosureMenuItem(title: "What Can Mochi Do?", handler: actions.showHelp))
-        menu.addItem(ClosureMenuItem(title: "Quit Mochi", keyEquivalent: "q", handler: actions.quit))
+        menu.addItem(ClosureMenuItem(title: "Summon Cats", handler: actions.summon))
+        menu.addItem(ClosureMenuItem(title: "What Can CursorCat Do?", handler: actions.showHelp))
+        menu.addItem(ClosureMenuItem(title: "Quit CursorCat", keyEquivalent: "q", handler: actions.quit))
     }
 
     private func middleTruncated(_ name: String, maxLength: Int) -> String {

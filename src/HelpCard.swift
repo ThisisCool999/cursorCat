@@ -5,7 +5,7 @@ final class HelpCard {
     private var dismissWork: DispatchWorkItem?
 
     private static let text = """
-    ~ what can mochi do? ~
+    ~ what can cursorcat do? ~
 
     click him ....... pets & meows
     click his file .. opens it, right from his mouth

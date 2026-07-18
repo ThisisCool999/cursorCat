@@ -35,7 +35,7 @@ func drawBackground(_ ctx: CGContext) {
     let bar = NSColor(hex: 0xF2EFE9).usingColorSpace(.sRGB)!
     ctx.setFillColor(bar.cgColor)
     ctx.fill(CGRect(x: 0, y: canvasH - 22, width: canvasW, height: 22))
-    NSString(string: "🐾  Mochi").draw(
+    NSString(string: "🐾  CursorCat").draw(
         at: NSPoint(x: 10, y: CGFloat(canvasH) - 19),
         withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 11, weight: .bold), .foregroundColor: Palette.ink]
     )
