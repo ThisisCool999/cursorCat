@@ -56,6 +56,7 @@ Native Swift + AppKit, zero dependencies. The cat is 32×32 pixel art defined as
 ## FAQ
 
 **Does it need accessibility / screen recording / network?** No, no, and no.
+**Why doesn't it show up in Force Quit (⌘⌥Esc)?** It's a menu-bar-only app (no Dock icon), and macOS hides those from the Force Quit list. Quit from 🐾 in the menu bar; if you ever need a hard kill, use Activity Monitor.
 **It says the app is damaged / can't be opened.** That's Gatekeeper — see Install step 2.
 **He ate my cursor and I have regrets.** He gives it back in three seconds. Usually.
 
