@@ -102,6 +102,7 @@ final class PetEngine {
     var onCursorEaten: (() -> Void)?
     var onCursorSpat: (() -> Void)?
     var tongueGate: (() -> Bool)?
+    var napGate: (() -> Bool)?
 
     var facingDirection: CGFloat { facing }
 
@@ -273,6 +274,10 @@ final class PetEngine {
 
     private func enterCursorNap() {
         guard !isHoldingFile else { return }
+        guard napGate?() ?? true else {
+            napPlanned = false
+            return
+        }
         surface = .air
         velocity = .zero
         ridingRect = nil

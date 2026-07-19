@@ -201,6 +201,10 @@ final class PetController: NSObject {
             if !cat.panel.frame.intersects(frame), !cat.lastHidden {
                 cat.place(on: frame)
             }
+
+            if cat.engine.isNappingInCursor, cat !== nappingCat {
+                cat.engine.wakeFromCursorNap(at: cat.engine.position)
+            }
         }
         effects.setTongue(from: tongueState?.tongueFrom, to: tongueState?.tongueTo)
         effects.setFakeCursor(at: tongueState?.fakeCursor)
@@ -296,6 +300,9 @@ final class PetController: NSObject {
         cat.engine.onCursorSpat = { [weak cat] in cat?.bubbles.showSpeech("ptooey!!", duration: 1.6) }
         cat.engine.tongueGate = { [weak self] in
             self?.cats.allSatisfy { $0.engine.activity != .tongueEat } ?? true
+        }
+        cat.engine.napGate = { [weak self] in
+            self?.nappingCat == nil
         }
 
         cat.view.onTap = { [weak self, weak cat] in
@@ -401,7 +408,7 @@ final class PetController: NSObject {
         let cat = makeCat(look: .guest(coat), isGuest: true, spec: nil)
         cat.guestLeaveAt = now + .random(in: 35...75)
         cat.place(on: screen, at: .random(in: screen.minX + 100...screen.maxX - 100))
-        cat.bubbles.showSpeech(["hi!", "a friend :3", "sup"].randomElement()!, duration: 1.8)
+        cat.bubbles.showSpeech(["hi!! (just visiting)", "a friend :3 (visiting)", "sup (passing through)"].randomElement()!, duration: 2.6)
     }
 
     private func wireWatcher() {
